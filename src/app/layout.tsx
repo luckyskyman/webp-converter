@@ -20,7 +20,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "WebP 일괄 변환기",
     description: "클라이언트 사이드에서 작동하는 빠르고 강력한 WebP 변환기",
-    url: "https://webp-converter-sba8.vercel.app/", // This should be updated with the final domain
+    url: "https://webp-conversion.vercel.app/",
     siteName: "WebP Converter",
     images: [
       {
