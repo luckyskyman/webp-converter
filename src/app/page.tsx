@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useCallback, useEffect } from 'react';
+import Image from 'next/image';
 import { Upload, Loader2, Download, RefreshCw, CheckCircle2, XCircle, Archive, Settings } from 'lucide-react';
 import imageCompression from 'browser-image-compression';
 import JSZip from 'jszip';
@@ -17,7 +18,6 @@ interface ProcessedFile {
 
 export default function Home() {
   const [files, setFiles] = useState<ProcessedFile[]>([]);
-  const [isProcessing, setIsProcessing] = useState(false);
   const [isZipping, setIsZipping] = useState(false);
   const [quality, setQuality] = useState(80);
   const [maxDimension, setMaxDimension] = useState(1920);
@@ -43,8 +43,6 @@ export default function Home() {
     const filesToProcess = files.filter(f => f.status === 'pending');
     if (filesToProcess.length === 0) return;
 
-    setIsProcessing(true);
-
     const conversionPromises = filesToProcess.map(async (file) => {
       try {
         setFiles(prev => prev.map(f => f.id === file.id ? { ...f, status: 'converting' } : f));
@@ -60,7 +58,6 @@ export default function Home() {
     });
 
     await Promise.all(conversionPromises);
-    setIsProcessing(false);
   }, [files, quality, maxDimension]);
 
   useEffect(() => {
@@ -97,7 +94,12 @@ export default function Home() {
   };
 
   const handleReConvert = () => {
-    setFiles(prev => prev.map(f => ({ ...f, status: 'pending', convertedFile: null, convertedUrl: f.convertedUrl ? URL.revokeObjectURL(f.convertedUrl) as any : null })))
+    setFiles(prev => prev.map(f => {
+      if (f.convertedUrl) {
+        URL.revokeObjectURL(f.convertedUrl);
+      }
+      return { ...f, status: 'pending', convertedFile: null, convertedUrl: null };
+    }))
   }
 
   const handleReset = () => {
@@ -149,7 +151,7 @@ export default function Home() {
             <div className="space-y-3 max-h-[50vh] overflow-y-auto pr-2">
               {files.map(file => (
                 <div key={file.id} className="bg-gray-900/70 p-3 rounded-lg flex items-center gap-4">
-                  <img src={file.originalUrl} alt={file.originalFile.name} className="w-16 h-16 object-cover rounded-md flex-shrink-0" />
+                  <Image src={file.originalUrl} alt={file.originalFile.name} width={64} height={64} className="w-16 h-16 object-cover rounded-md flex-shrink-0" />
                   <div className="flex-grow min-w-0"><p className="text-white font-semibold truncate">{file.originalFile.name}</p><p className="text-sm text-gray-400">{(file.originalFile.size / 1024).toFixed(1)} KB</p></div>
                   <div className="flex items-center gap-4 w-64 flex-shrink-0">
                     {file.status === 'converting' && <Loader2 className="w-6 h-6 animate-spin text-blue-400" />}
