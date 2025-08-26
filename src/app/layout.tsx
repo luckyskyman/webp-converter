@@ -9,7 +9,7 @@ import JSZip from 'jszip';
 export const metadata: Metadata = {
   title: "WebP 일괄 변환기 | 빠르고 간편한 이미지 최적화",
   description: "여러 장의 JPG, PNG 이미지를 한 번에 WebP로 변환하여 웹사이트 로딩 속도를 개선하세요. 품질, 해상도 조절 및 ZIP 다운로드를 지원합니다.",
-  manifest: "/manifest.json",
+  // manifest: "/manifest.json",
   themeColor: "#111827",
   applicationName: "WebP 변환기",
   appleWebApp: {
